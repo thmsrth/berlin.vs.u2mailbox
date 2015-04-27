@@ -9,6 +9,9 @@ public class ChatWindow extends javax.swing.JFrame {
     private JLabel lblInfo;
     private JScrollPane scrollPane;
     private JPanel panel;
+    private JPanel bottomPanel;
+    private JTextField msgField;
+    private JButton sendButton;
 
 
     /** Creates new form ChatWindow */
@@ -27,11 +30,16 @@ public class ChatWindow extends javax.swing.JFrame {
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
+        
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridLayout(1,2));
 
         lblInfo = new JLabel();
         scrollPane = new JScrollPane();
         chatArea = new JTextArea();
 
+        msgField = new JTextField();
+        sendButton = new JButton("send");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(300, 300);
@@ -41,9 +49,13 @@ public class ChatWindow extends javax.swing.JFrame {
         chatArea.setColumns(20);
         chatArea.setRows(5);
         scrollPane.setViewportView(chatArea);
+        
+        bottomPanel.add(msgField);
+        bottomPanel.add(sendButton);
 
         panel.add(lblInfo,BorderLayout.PAGE_START);
         panel.add(chatArea,BorderLayout.CENTER);
+        panel.add(bottomPanel, BorderLayout.PAGE_END);
         add(panel);
     }
 
