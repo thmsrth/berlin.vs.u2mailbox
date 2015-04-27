@@ -19,17 +19,17 @@ public class client {
          * In your case you'll receive message from multiple systems.
          */
         /* Fill up JSON variable with message and username */
-        transmitJSON.put("Message", "Hello JavaQuery!");
+        transmitJSON.put("Message", "msg hallo du netter mann Steve.Jobs");
         transmitJSON.put("Username", "Vicky.Thakor");
         /* Send message to server */
         c.sendMessage("localhost", transmitJSON.toString());
         
-        transmitJSON.put("Message", "Hello Apple!");
+        transmitJSON.put("Message", "ls /Users");
         transmitJSON.put("Username", "Steve.Jobs");
         /* Send message to server */
         c.sendMessage("localhost", transmitJSON.toString());
         
-        transmitJSON.put("Message", "How are you?");
+        transmitJSON.put("Message", "who");
         transmitJSON.put("Username", "Steve.Jobs");
         /* Send message to server */
         c.sendMessage("localhost", transmitJSON.toString());
