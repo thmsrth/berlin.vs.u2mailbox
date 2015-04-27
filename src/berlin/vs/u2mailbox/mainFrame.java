@@ -28,8 +28,10 @@ public class MainFrame extends JFrame {
 	public int serverPort;
 
 	// Variables declaration
-	private JPanel panel;
-	private JLabel lblInformation;
+	private JPanel panelMain;
+	private JPanel panelPort;
+	private JPanel panelMessages;
+	private JTextArea txtInformation;
 	private JLabel lblPort;
 	private JTextField txtPort;
 	private JButton button;
@@ -39,10 +41,9 @@ public class MainFrame extends JFrame {
 	 */
 	public void startServer() {
 		try {
-			System.out.print("run... on port: ");
-			System.out.println(this.serverPort);
+			this.txtInformation.setText("run... on port: " + this.serverPort);
 			/* Create thread of Inner class mainServer */
-			Thread t = new MainServer();
+			Thread t = new MainServer(this.serverPort);
 			/* Start Thread */
 			t.start();
 		} catch (Exception e) {
@@ -51,15 +52,24 @@ public class MainFrame extends JFrame {
 	}
 
 	private void initComponents(final MainFrame mFrame) {
-		panel = new JPanel();
-		panel.setLayout(new BorderLayout());
+		panelMain = new JPanel();
+		panelMessages = new JPanel();
+		panelPort = new JPanel();
 
-		lblInformation = new JLabel();
+		panelMain.setLayout(new BorderLayout());
+		panelMessages.setLayout(new FlowLayout());
+		panelPort.setLayout(new GridLayout(0,3));
+		panelMain.add(panelPort, BorderLayout.PAGE_START);
+		panelMain.add(panelMessages, BorderLayout.CENTER);
+
+		txtInformation = new JTextArea();
+		txtInformation.setColumns(25);
+		txtInformation.setRows(15);
+
 		lblPort = new JLabel();
 		txtPort = new JTextField();
 		button = new JButton("start");
 
-		lblInformation.setText("Server");
 		lblPort.setText("Server Port");
 
 		//Add action listener to button
@@ -72,16 +82,17 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		panel.add(lblInformation, BorderLayout.PAGE_START);
-		panel.add(lblPort, BorderLayout.LINE_START);
-		panel.add(txtPort, BorderLayout.CENTER);
-		panel.add(button, BorderLayout.PAGE_END);
+		panelMessages.add(txtInformation);
+
+		panelPort.add(lblPort);
+		panelPort.add(txtPort);
+		panelPort.add(button);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(300, 300);
-		setTitle("Server Settings");
+		setTitle("Server");
 
-		add(panel);
+		add(panelMain);
 	}
 
 	/**
@@ -120,8 +131,8 @@ public class MainFrame extends JFrame {
 		private String userName;
 
 		/* Constructor to initialize serverSocket */
-		public MainServer() throws IOException {
-			serverSocket = new ServerSocket(6666);
+		public MainServer(int serverPort) throws IOException {
+			serverSocket = new ServerSocket(serverPort);
 		}
 
 		/* Implement run() for Thread */
