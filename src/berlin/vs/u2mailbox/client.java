@@ -7,32 +7,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 import org.json.JSONObject;
 
-public class client {
+public class Client {
 
     public static void main(String[] args) {
-        client c = new client();
-        /* Create JSON variable */
-        JSONObject transmitJSON = new JSONObject();
-
-        /**
-         * This is sample program so we are sending three messages from same system with different username.
-         * In your case you'll receive message from multiple systems.
-         */
-        /* Fill up JSON variable with message and username */
-        transmitJSON.put("Message", "msg hallo du netter mann Steve.Jobs");
-        transmitJSON.put("Username", "Vicky.Thakor");
-        /* Send message to server */
-        c.sendMessage("localhost", transmitJSON.toString());
-        
-        transmitJSON.put("Message", "ls /Users");
-        transmitJSON.put("Username", "Steve.Jobs");
-        /* Send message to server */
-        c.sendMessage("localhost", transmitJSON.toString());
-        
-        transmitJSON.put("Message", "who");
-        transmitJSON.put("Username", "Steve.Jobs");
-        /* Send message to server */
-        c.sendMessage("localhost", transmitJSON.toString());
+        Client c = new Client();
     }
 
     /**
@@ -61,5 +39,46 @@ public class client {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void startListener(){
+        /* Create JSON variable */
+        JSONObject transmitJSON = new JSONObject();
+
+        /**
+         * This is sample program so we are sending three messages from same system with different username.
+         * In your case you'll receive message from multiple systems.
+         */
+        /* Fill up JSON variable with message and username */
+        transmitJSON.put("Message", "msg hallo du netter mann Steve.Jobs");
+        transmitJSON.put("Username", "Vicky.Thakor");
+        /* Send message to server */
+        this.sendMessage("localhost", transmitJSON.toString());
+
+        transmitJSON.put("Message", "ls /Users");
+        transmitJSON.put("Username", "Steve.Jobs");
+        /* Send message to server */
+        this.sendMessage("localhost", transmitJSON.toString());
+
+        transmitJSON.put("Message", "who");
+        transmitJSON.put("Username", "Steve.Jobs");
+        /* Send message to server */
+        this.sendMessage("localhost", transmitJSON.toString());
+    }
+
+    public Client(){
+         /* ChatWindow is not open for user sent message to server */
+						/* Create an Object of ChatWindow */
+            ChatWindow chatWindow = new ChatWindow(this);
+            /**
+             * We are setting title of window to identify user for
+             * next message we gonna receive You can set hidden
+             * value in ChatWindow.java file.
+             */
+            chatWindow.setTitle("Chat");
+						/* Set message to TextArea */
+            chatWindow.getjTextArea1().setText("start Chat...");
+						/* Make ChatWindow visible */
+            chatWindow.setVisible(true);
     }
 }

@@ -51,7 +51,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private void initComponents(final MainFrame mFrame) {
+	private void initComponents(final MainFrame mainFrame) {
 		panelMain = new JPanel();
 		panelMessages = new JPanel();
 		panelPort = new JPanel();
@@ -77,8 +77,8 @@ public class MainFrame extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				/* Call startServer method */
-				mFrame.serverPort = Integer.valueOf(txtPort.getText());
-				mFrame.startServer();
+				mainFrame.serverPort = Integer.valueOf(txtPort.getText());
+				mainFrame.startServer();
 			}
 		});
 
