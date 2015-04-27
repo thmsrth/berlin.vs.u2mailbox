@@ -6,7 +6,9 @@ package berlin.vs.u2mailbox;
  * mainFrame.java will act as a server program aimed to receive messages and respond to client.
  */
 
-import java.awt.Frame;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -17,16 +19,100 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class mainFrame extends javax.swing.JFrame {
+public class MainFrame extends JFrame {
+
+	public int serverPort;
+
+	// Variables declaration
+	private JPanel panel;
+	private JLabel lblInformation;
+	private JLabel lblPort;
+	private JTextField txtPort;
+	private JButton button;
+
+	/**
+	 * To start SocketServer when mainFrame.java loads
+	 */
+	public void startServer() {
+		try {
+			System.out.print("run... on port: ");
+			System.out.println(this.serverPort);
+			/* Create thread of Inner class mainServer */
+			Thread t = new MainServer();
+			/* Start Thread */
+			t.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initComponents(final MainFrame mFrame) {
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+
+		lblInformation = new JLabel();
+		lblPort = new JLabel();
+		txtPort = new JTextField();
+		button = new JButton("start");
+
+		lblInformation.setText("Server");
+		lblPort.setText("Server Port");
+
+		//Add action listener to button
+		button.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				/* Call startServer method */
+				mFrame.serverPort = Integer.valueOf(txtPort.getText());
+				mFrame.startServer();
+			}
+		});
+
+		panel.add(lblInformation, BorderLayout.PAGE_START);
+		panel.add(lblPort, BorderLayout.LINE_START);
+		panel.add(txtPort, BorderLayout.CENTER);
+		panel.add(button, BorderLayout.PAGE_END);
+
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setSize(300, 300);
+		setTitle("Server Settings");
+
+		add(panel);
+	}
+
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String args[]) {
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				/* To set new look and feel */
+				JFrame.setDefaultLookAndFeelDecorated(true);
+				try {
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				/* Create an Object of mainFrame */
+				MainFrame mFrame = new MainFrame();
+				mFrame.initComponents(mFrame);
+
+				/* make mainFrame visible */
+				mFrame.setVisible(true);
+			}
+		});
+	}
+
 
 	/* Inner class to create socket server */
-	private class mainServer extends Thread {
+	private class MainServer extends Thread {
 
 		/* Create ServerSocket variable */
 		private ServerSocket serverSocket;
@@ -34,7 +120,7 @@ public class mainFrame extends javax.swing.JFrame {
 		private String userName;
 
 		/* Constructor to initialize serverSocket */
-		public mainServer() throws IOException {
+		public MainServer() throws IOException {
 			serverSocket = new ServerSocket(6666);
 		}
 
@@ -53,7 +139,7 @@ public class mainFrame extends javax.swing.JFrame {
 					 * Parse String to JSONObject
 					 */
 					JSONObject clientMessage = new JSONObject(in.readUTF());
-					
+
 					// Pruefung bei Anmeldung
 					if (clientMessage.get("Username") != null) {
 						if (users.size() <= 5) {
@@ -76,11 +162,11 @@ public class mainFrame extends javax.swing.JFrame {
 					}else{
 						System.out.println("JSON Objekt ohne Username erhalten!");
 					}
-					
+
 					String message = clientMessage.getString("Message").toString();
 					String[] words = message.split(" ");
 					String key = words[0];
-					
+
 					switch(key){
 						case "time":
 							SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -92,11 +178,11 @@ public class mainFrame extends javax.swing.JFrame {
 							if(dir.exists()){
 								File[] fileList = dir.listFiles();
 								for(File f : fileList) {
-								    System.out.println(f.getName());
+									System.out.println(f.getName());
 								}
 							}else{
 								System.out.println("Verzeichnis existiert nicht");
-								}
+							}
 							break;
 						case "who":
 							System.out.println("Angemeldete User:");
@@ -115,7 +201,7 @@ public class mainFrame extends javax.swing.JFrame {
 							System.out.println(nachricht);
 							break;
 						case "exit":
-							
+
 							break;
 						default:
 							System.out.println("Ungueltiger Kommand");
@@ -176,91 +262,4 @@ public class mainFrame extends javax.swing.JFrame {
 		}
 	}
 
-	/**
-	 * To start SocketServer when mainFrame.java loads
-	 */
-	public void startServer() {
-		try {
-			/* Create thread of Inner class mainServer */
-			Thread t = new mainServer();
-			/* Start Thread */
-			t.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/** Creates new form mainFrame */
-	public mainFrame() {
-		initComponents();
-	}
-
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
-	//
-	private void initComponents() {
-
-		lblInformation = new javax.swing.JLabel();
-
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Server");
-		setAlwaysOnTop(true);
-
-		lblInformation.setText("Client - Server Sample Application");
-
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				layout.createSequentialGroup().addContainerGap()
-						.addComponent(lblInformation)
-						.addContainerGap(229, Short.MAX_VALUE)));
-		layout.setVerticalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				layout.createSequentialGroup().addContainerGap()
-						.addComponent(lblInformation)
-						.addContainerGap(275, Short.MAX_VALUE)));
-
-		pack();
-	}//
-
-	/**
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(String args[]) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			public void run() {
-				/* To set new look and feel */
-				JFrame.setDefaultLookAndFeelDecorated(true);
-				try {
-					/**
-					 * Change look and feel of JFrame to Nimbus For other look
-					 * and feel check
-					 * 
-					 */
-					UIManager
-							.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				/* Create an Object of mainFrame */
-				mainFrame mFrame = new mainFrame();
-				/* make mainFrame visible */
-				mFrame.setVisible(true);
-				/* Call startServer method */
-				mFrame.startServer();
-			}
-		});
-	}
-
-	// Variables declaration - do not modify
-	private javax.swing.JLabel lblInformation;
-	// End of variables declaration
 }

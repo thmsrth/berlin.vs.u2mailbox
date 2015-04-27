@@ -1,6 +1,15 @@
 package berlin.vs.u2mailbox;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class ChatWindow extends javax.swing.JFrame {
+
+    private JTextArea chatArea;
+    private JLabel lblInfo;
+    private JScrollPane scrollPane;
+    private JPanel panel;
+
 
     /** Creates new form ChatWindow */
     public ChatWindow() {
@@ -16,42 +25,27 @@ public class ChatWindow extends javax.swing.JFrame {
     //                           
     private void initComponents() {
 
-        lblInfo = new javax.swing.JLabel();
-        scrollPane = new javax.swing.JScrollPane();
-        chatArea = new javax.swing.JTextArea();
+        panel = new JPanel();
+        panel.setLayout(new BorderLayout());
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        lblInfo = new JLabel();
+        scrollPane = new JScrollPane();
+        chatArea = new JTextArea();
+
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(300, 300);
         setTitle("Message Box");
 
-        lblInfo.setText("Messages");
-
+        lblInfo.setText("Messages:");
         chatArea.setColumns(20);
         chatArea.setRows(5);
         scrollPane.setViewportView(chatArea);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(lblInfo))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblInfo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        pack();
-    }//                         
+        panel.add(lblInfo,BorderLayout.PAGE_START);
+        panel.add(chatArea,BorderLayout.CENTER);
+        add(panel);
+    }
 
     /**
      * @param args the command line arguments
@@ -64,11 +58,6 @@ public class ChatWindow extends javax.swing.JFrame {
             }
         });
     }
-    // Variables declaration - do not modify                     
-    private javax.swing.JTextArea chatArea;
-    private javax.swing.JLabel lblInfo;
-    private javax.swing.JScrollPane scrollPane;
-    // End of variables declaration                   
 
     /**
      * @return the chatArea
