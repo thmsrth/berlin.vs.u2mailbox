@@ -128,4 +128,116 @@ public class ChatWindow extends javax.swing.JFrame {
     public void setjTextArea1(javax.swing.JTextArea jTextArea1) {
         this.chatArea = jTextArea1;
     }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public JTextArea getChatArea() {
+        return chatArea;
+    }
+
+    public void setChatArea(JTextArea chatArea) {
+        this.chatArea = chatArea;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(JScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public JPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(JPanel panel) {
+        this.panel = panel;
+    }
+
+    public JPanel getBottomPanel() {
+        return bottomPanel;
+    }
+
+    public void setBottomPanel(JPanel bottomPanel) {
+        this.bottomPanel = bottomPanel;
+    }
+
+    public JPanel getTopPanel() {
+        return topPanel;
+    }
+
+    public void setTopPanel(JPanel topPanel) {
+        this.topPanel = topPanel;
+    }
+
+    public JTextField getMsgField() {
+        return msgField;
+    }
+
+    public void setMsgField(JTextField msgField) {
+        this.msgField = msgField;
+    }
+
+    public JButton getSendButton() {
+        return sendButton;
+    }
+
+    public void setSendButton(JButton sendButton) {
+        this.sendButton = sendButton;
+    }
+
+    public JLabel getLblPortServer() {
+        return lblPortServer;
+    }
+
+    public void setLblPortServer(JLabel lblPortServer) {
+        this.lblPortServer = lblPortServer;
+    }
+
+    public JLabel getLblUser() {
+        return lblUser;
+    }
+
+    public void setLblUser(JLabel lblUser) {
+        this.lblUser = lblUser;
+    }
+
+    public JTextField getPortField() {
+        return portField;
+    }
+
+    public void setPortField(JTextField portField) {
+        this.portField = portField;
+    }
+
+    public JTextField getServerField() {
+        return serverField;
+    }
+
+    public void setServerField(JTextField serverField) {
+        this.serverField = serverField;
+    }
+
+    public JTextField getUserField() {
+        return userField;
+    }
+
+    public void setUserField(JTextField userField) {
+        this.userField = userField;
+    }
+
+    public JButton getLoginButton() {
+        return loginButton;
+    }
+
+    public void setLoginButton(JButton loginButton) {
+        this.loginButton = loginButton;
+    }
 }

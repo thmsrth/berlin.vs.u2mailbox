@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,7 +82,7 @@ public class Client {
             /* Create new socket connection with server host using port 6666 (port can be anything) */
             this.client = new Socket(this.chatWindow.getServerField().getText(), Integer.parseInt(this.chatWindow.getPortField().getText()));
             
-            ClientListener cl = new ClientListener(Integer.parseInt(this.chatWindow.getPortField().getText()));
+            ClientListener cl = new ClientListener();
             
             cl.start();
             
@@ -120,19 +119,19 @@ public class Client {
     	
     	public ServerSocket serverSocket;
     	
-    	public ClientListener(int serverPort) throws IOException {
-            serverSocket = new ServerSocket(serverPort);
+    	public ClientListener() throws IOException {
+            //serverSocket = new ServerSocket(serverPort);
     	}
     	
     	public void run(){
     		while(true){
     			try {
 					/* Accept connection on server */
-                    Socket server = serverSocket.accept();
+                    client = serverSocket.accept();
 
 					/* DataInputStream to get message sent by client program */
                     DataInputStream in = new DataInputStream(
-                            server.getInputStream());
+                            client.getInputStream());
 
                     JSONObject serverMessage = new JSONObject(in.readUTF());
                     

@@ -9,12 +9,10 @@ package berlin.vs.u2mailbox;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,9 +20,12 @@ import java.util.Calendar;
 
 import javax.swing.*;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MainFrame extends JFrame {
+
+    private ArrayList<Client> clients = new ArrayList();
 
     public int serverPort;
 
@@ -103,7 +104,7 @@ public class MainFrame extends JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-				/* To set new look and feel */
+                /* To set new look and feel */
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 try {
                     UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -125,12 +126,14 @@ public class MainFrame extends JFrame {
         public String username;
         public String ipAddress;
         public int port;
-        public Thread session;
+        public ClientSession session;
 
         public Client(final String ipAddress, final int port) {
             this.ipAddress = ipAddress;
             this.port = port;
-            this.session = new ClientSession();
+            this.session = new ClientSession(this);
+            System.out.println("session starts...");
+            this.session.start();
         }
 
         public void setUsername(String username) {
@@ -140,32 +143,43 @@ public class MainFrame extends JFrame {
 
     private class ClientSession extends Thread {
 
-        public ClientSession() {
-          /*
-			            * We are receiving message in JSON format from client.
-			            * Parse String to JSONObject
-			            */
-            JSONObject clientMessage = null;
-            try {
-                clientMessage = new JSONObject(in.readUTF());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        private Client client;
+        private DataOutputStream out;
+
+        public ClientSession(final Client client) {
+            this.client = client;
+        }
+
+        /* Implement run() for Thread */
+        public void run() {
+        /* Keep Thread running */
+            while (true) {
+                /* Create new socket connection with server host using port 6666 (port can be anything) */
+                Socket receiver = null;
+                try {
+                    receiver = new Socket(this.client.ipAddress, this.client.port);
+                     /* Get server's OutputStream */
+                    OutputStream outToServer = receiver.getOutputStream();
+                    /* Get server's DataOutputStream to write/send message */
+                    this.out = new DataOutputStream(outToServer);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }
 
-            String message = clientMessage.getString("Message").toString();
-            String[] words = message.split(" ");
-            String key = words[0];
+        public void handleMessages(final Message msg) {
 
-            switch (key) {
+            switch (msg.command) {
                 case "time":
                     SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                     String time = format.format(Calendar.getInstance().getTime());
                     System.out.println(format.format(Calendar.getInstance().getTime()));
                     break;
                 case "ls":
-                    File dir = new File(words[1]);
+                    File dir = new File(msg.params.get(0));
                     if (dir.exists()) {
                         File[] fileList = dir.listFiles();
                         for (File f : fileList) {
@@ -177,16 +191,16 @@ public class MainFrame extends JFrame {
                     break;
                 case "who":
                     System.out.println("Angemeldete User:");
-                    for (String ausgabe : users) {
-                        System.out.println(ausgabe);
+                    for (Client c : clients) {
+                        System.out.println(c.username);
                     }
                     break;
                 case "msg":
                     String nachricht = "";
-                    for (int i = 1; i < words.length - 1; i++) {
-                        nachricht = nachricht + words[i] + " ";
+                    for (int i = 1; i < msg.params.size() - 1; i++) {
+                        nachricht = nachricht + msg.params.get(i) + " ";
                     }
-                    String client = words[words.length - 1];
+                    String client = msg.params.get(msg.params.size() - 1);
                     System.out.println(client);
                     System.out.println(nachricht);
                     break;
@@ -194,17 +208,42 @@ public class MainFrame extends JFrame {
 
                     break;
                 default:
-                    System.out.println("Ungueltiger Kommand");
+                    System.out.println("Ungueltiger Command");
             }
 
-					/* Reading Message and Username from JSONObject */
-            userName = clientMessage.get("Username").toString();
-            //String message = clientMessage.getString("Message").toString();
+            try {
+                out.writeBytes("received Data");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
+    }
 
-        public void handleMessages(final DataInputStream in) {
+    private class Message {
+        public int sequence;
+        public String command;
+        public ArrayList<String> params;
 
+        public Message(final String msg) {
+        /*
+         * We are receiving message in JSON format from client.
+		 * Parse String to JSONObject
+		 */
+            JSONObject clientMessage = null;
+            try {
+                clientMessage = new JSONObject(msg);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            this.sequence = clientMessage.getInt("sequence");
+            this.command = clientMessage.getString("command");
+
+            JSONArray arr = clientMessage.getJSONArray("params");
+            for (int i = 0; i < arr.length(); i++) {
+                this.params.add(arr.getJSONObject(i).getString("name"));
+            }
         }
     }
 
@@ -214,16 +253,16 @@ public class MainFrame extends JFrame {
 
         /* Create ServerSocket variable */
         public ServerSocket serverSocket;
-        private ArrayList<Client> clients = new ArrayList();
-
 
         /* Constructor to initialize serverSocket */
         public MainServer(int serverPort) throws IOException {
             serverSocket = new ServerSocket(serverPort);
         }
 
-        public Client openClientConnection(final String ipAddress, final int port) {
+        private Client openClientConnection(final String ipAddress, final int port) {
             Client client = null;
+
+            System.out.println("connection try to open...");
 
             for (Client c : clients) {
                 if (c.ipAddress == ipAddress && c.port == port) {
@@ -251,6 +290,8 @@ public class MainFrame extends JFrame {
                     DataInputStream in = new DataInputStream(
                             server.getInputStream());
 
+                    Message msg = new Message(in.readUTF());
+
                     Client client = openClientConnection(server.getInetAddress().getHostName(), server.getPort());
 
                     if (client == null) {
@@ -260,8 +301,9 @@ public class MainFrame extends JFrame {
 
                             /* Send response message to client */
                         out.writeUTF("Could not connect to server. Server is full!");
+                    } else {
+                        client.session.handleMessages(msg);
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
