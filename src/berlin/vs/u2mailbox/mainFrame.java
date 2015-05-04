@@ -120,6 +120,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
+	
 
 
 	/* Inner class to create socket server */
@@ -181,7 +182,7 @@ public class MainFrame extends JFrame {
 					switch(key){
 						case "time":
 							SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-							String zeit = format.format(Calendar.getInstance().getTime());
+							String time = format.format(Calendar.getInstance().getTime());
 							System.out.println(format.format(Calendar.getInstance().getTime()));
 							break;
 						case "ls":
@@ -218,49 +219,13 @@ public class MainFrame extends JFrame {
 							System.out.println("Ungueltiger Kommand");
 					}
 
-					/*
-					 * Flag to check chat window is opened for user that sent
-					 * message
-					 */
-					boolean flagChatWindowOpened = false;
 					/* Reading Message and Username from JSONObject */
 					userName = clientMessage.get("Username").toString();
 					//String message = clientMessage.getString("Message").toString();
+					
+					
 
-					/* Get list of Frame/Windows opened by mainFrame.java */
-					for (Frame frame : Frame.getFrames()) {
-						/* Check Frame/Window is opened for user */
-						if (frame.getTitle().equals(userName)) {
-							/* Frame/ Window is already opened */
-							flagChatWindowOpened = true;
-							/* Get instance of ChatWindow */
-							ChatWindow chatWindow = (ChatWindow) frame;
-							/* Get previous messages from TextArea */
-							String previousMessage = chatWindow.getjTextArea1()
-									.getText();
-							/* Set message to TextArea with new message */
-							chatWindow.getjTextArea1().setText(
-									previousMessage + "\n" + message);
-						}
-					}
-
-					/* ChatWindow is not open for user sent message to server */
-					if (!flagChatWindowOpened) {
-						/* Create an Object of ChatWindow */
-						ChatWindow chatWindow = new ChatWindow();
-						/**
-						 * We are setting title of window to identify user for
-						 * next message we gonna receive You can set hidden
-						 * value in ChatWindow.java file.
-						 */
-						chatWindow.setTitle(userName);
-						/* Set message to TextArea */
-						chatWindow.getjTextArea1().setText(message);
-						/* Make ChatWindow visible */
-						chatWindow.setVisible(true);
-					}
-
-					/* Get DataOutputStream of client to repond */
+					/* Get DataOutputStream of client to respond */
 					DataOutputStream out = new DataOutputStream(
 							server.getOutputStream());
 					/* Send response message to client */

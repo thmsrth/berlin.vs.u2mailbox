@@ -123,7 +123,7 @@ public class ChatWindow extends javax.swing.JFrame {
     }
 
     /**
-     * @param chatArea the chatArea to set
+     * @param jTextArea1 the chatArea to set
      */
     public void setjTextArea1(javax.swing.JTextArea jTextArea1) {
         this.chatArea = jTextArea1;
