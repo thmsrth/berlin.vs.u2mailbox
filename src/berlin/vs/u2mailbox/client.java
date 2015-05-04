@@ -13,22 +13,9 @@ import org.json.JSONObject;
 public class Client {
 
     private ChatWindow chatWindow;
-    private String hostname;
-    private String ipAddress;
 
     public static void main(String[] args) {
         Client c = new Client();
-    }
-
-    private String getIPAddress(String hostname){
-        InetAddress ipAddress = null;
-        try {
-            ipAddress = InetAddress.getByName(hostname);
-            System.out.println("IP address: " + ipAddress.getHostAddress());
-        } catch ( UnknownHostException e ) {
-            System.out.println("Could not find IP address for: " + hostname);
-        }
-        return ipAddress.getHostAddress();
     }
 
     /**
@@ -60,14 +47,6 @@ public class Client {
     }
 
     public void startListener(){
-        try{
-            this.hostname = InetAddress.getLocalHost().getHostName();
-            this.ipAddress = this.getIPAddress(hostname);
-            System.out.println("Host: " + hostname);
-            System.out.println("IP: " + ipAddress);
-        } catch(UnknownHostException exc){
-            System.err.print("Host konnte nicht gelesen werden");
-        }
 
         /* Create JSON variable */
         JSONObject transmitJSON = new JSONObject();

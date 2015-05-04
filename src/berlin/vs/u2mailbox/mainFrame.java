@@ -120,7 +120,16 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
-	
+
+	private class Client {
+		private String username;
+		private String ipAddress;
+
+		public Client(final String username, final String ipAddress){
+			this.username = username;
+			this.ipAddress = ipAddress;
+		}
+	}
 
 
 	/* Inner class to create socket server */
@@ -129,7 +138,7 @@ public class MainFrame extends JFrame {
 		/* Create ServerSocket variable */
 		private ServerSocket serverSocket;
 		private ArrayList<String> users = new ArrayList();
-		private String userName;
+
 
 		/* Constructor to initialize serverSocket */
 		public MainServer(int serverPort) throws IOException {
@@ -143,6 +152,8 @@ public class MainFrame extends JFrame {
 				try {
 					/* Accept connection on server */
 					Socket server = serverSocket.accept();
+
+					String userName;
 					/* DataInputStream to get message sent by client program */
 					DataInputStream in = new DataInputStream(
 							server.getInputStream());
