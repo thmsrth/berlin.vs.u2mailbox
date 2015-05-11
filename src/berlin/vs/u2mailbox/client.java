@@ -136,12 +136,6 @@ public class Client {
 
     private class ClientListener extends Thread {
     	
-    	public Socket serverSocket;
-    	
-    	public ClientListener() throws IOException {
-            //serverSocket = new ServerSocket(serverPort);
-    	}
-    	
     	public void run(){
     		while(true){
     			try {
