@@ -58,14 +58,14 @@ public class ChatWindow extends javax.swing.JFrame {
 
             public void actionPerformed(ActionEvent e) {
 				/* Call startServer method */
-
+                client.messageSend();
             }
         });
 
         lblPortServer = new JLabel("Port / Server");
         lblUser = new JLabel("User");
-        portField = new JTextField();
-        serverField = new JTextField();
+        portField = new JTextField("6879");
+        serverField = new JTextField("localhost");
         userField = new JTextField();
         loginButton = new JButton("anmelden");
 

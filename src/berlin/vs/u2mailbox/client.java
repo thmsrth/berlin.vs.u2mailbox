@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -23,6 +22,7 @@ public class Client {
     private String hostname;
     private String ipAddress;
     private Socket client;
+    private int msgCounter;
 
     public static void main(String[] args) {
         Client c = new Client();
@@ -71,6 +71,7 @@ public class Client {
         try{
             this.hostname = InetAddress.getLocalHost().getHostName();
             this.ipAddress = this.getIPAddress(hostname);
+            this.msgCounter = 0;
             System.out.println("Host: " + hostname);
             System.out.println("IP: " + ipAddress);
         } catch(UnknownHostException exc){
@@ -97,11 +98,29 @@ public class Client {
     	try {
 	    	/* Create JSON variable */
 	        JSONObject transmitJSON = new JSONObject();
-	        ArrayList<String> para = new ArrayList();
-	        Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
-	        
-	        transmitJSON.put("sequence", currentTimestamp);
-	        transmitJSON.put("command", this.chatWindow.getMsgField().getText());
+            JSONArray para = new JSONArray();
+            String cmd = null;
+	        //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
+	        this.msgCounter++;
+
+            String[] commandArr = this.chatWindow.getMsgField().getText().split(":");
+            int i = 0;
+            int commandCounter = 0;
+
+            for (String s : commandArr){
+                if (i == 0){
+                    cmd = s;
+                }else{
+                    JSONObject elem = new JSONObject();
+                    elem.put(Integer.toString(commandCounter), s);
+                    para.put(elem);
+                    commandCounter++;
+                }
+                    i++;
+            }
+
+	        transmitJSON.put("sequence", this.msgCounter);
+	        transmitJSON.put("command", cmd);
 	        transmitJSON.put("params", para);
 	        
 	    	/* Get server's OutputStream */
@@ -117,7 +136,7 @@ public class Client {
 
     private class ClientListener extends Thread {
     	
-    	public ServerSocket serverSocket;
+    	public Socket serverSocket;
     	
     	public ClientListener() throws IOException {
             //serverSocket = new ServerSocket(serverPort);
@@ -126,8 +145,7 @@ public class Client {
     	public void run(){
     		while(true){
     			try {
-					/* Accept connection on server */
-                    client = serverSocket.accept();
+                    String response = null;
 
 					/* DataInputStream to get message sent by client program */
                     DataInputStream in = new DataInputStream(
@@ -135,12 +153,15 @@ public class Client {
 
                     JSONObject serverMessage = new JSONObject(in.readUTF());
                     
-                    if(serverMessage.get("") != null){
-                    	
+                    if(serverMessage != null){
+                    	response = this.readJson(serverMessage);
                     }
                     
                     /* Print message received from server */
-                    System.out.println("Server says..." + in.readUTF());
+                    System.out.println("Server says..." + response);
+                    String text = chatWindow.getjTextArea1().getText();
+                    text = text + response;
+                    chatWindow.getjTextArea1().setText(text);
                     
 
                 } catch (Exception e) {
@@ -148,6 +169,22 @@ public class Client {
                 }
     		}
     	}
+
+        private String readJson(JSONObject json){
+            int sequence = json.getInt("sequence");
+            ArrayList<String> params = new ArrayList();
+            String response = Integer.toString(sequence)+": ";
+
+            JSONArray arr = json.getJSONArray("response");
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                String value = object.getString(Integer.toString(i));
+                params.add(value);
+                response = response + " " + value;
+            }
+
+            return response;
+        }
     	
     }
     

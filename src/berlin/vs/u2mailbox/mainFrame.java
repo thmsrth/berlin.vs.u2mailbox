@@ -10,9 +10,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.rmi.server.ExportException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class MainFrame extends JFrame {
         txtInformation.setRows(15);
 
         lblPort = new JLabel();
-        txtPort = new JTextField();
+        txtPort = new JTextField("6879");
         button = new JButton("start");
 
         lblPort.setText("Server Port");
@@ -122,55 +123,36 @@ public class MainFrame extends JFrame {
         });
     }
 
-    private class Client {
+    private class Client extends Thread {
         public String username;
         public String ipAddress;
         public int port;
-        public ClientSession session;
+        public DataInputStream in;
+        public DataOutputStream out;
+        private int msgCounter = 0;
 
-        public Client(final String ipAddress, final int port) {
+        public Client(final String ipAddress, final int port, final DataInputStream in, final DataOutputStream out) {
             this.ipAddress = ipAddress;
             this.port = port;
-            this.session = new ClientSession(this);
+            this.in = in;
+            this.out = out;
             System.out.println("session starts...");
-            this.session.start();
         }
 
-        public void setUsername(String username) {
-            this.username = username;
-        }
-    }
-
-    private class ClientSession extends Thread {
-
-        private Client client;
-        private DataOutputStream out;
-
-        public ClientSession(final Client client) {
-            this.client = client;
-        }
-
-        /* Implement run() for Thread */
         public void run() {
-        /* Keep Thread running */
             while (true) {
-                /* Create new socket connection with server host using port 6666 (port can be anything) */
-                Socket receiver = null;
                 try {
-                    receiver = new Socket(this.client.ipAddress, this.client.port);
-                     /* Get server's OutputStream */
-                    OutputStream outToServer = receiver.getOutputStream();
-                    /* Get server's DataOutputStream to write/send message */
-                    this.out = new DataOutputStream(outToServer);
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
+                    if (!this.in.readUTF().isEmpty()) {
+                        handleMessages(new Message(in.readUTF()));
+                    }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
             }
         }
 
         public void handleMessages(final Message msg) {
+            ArrayList<String> responseArr = new ArrayList();
 
             switch (msg.command) {
                 case "time":
@@ -197,12 +179,14 @@ public class MainFrame extends JFrame {
                     break;
                 case "msg":
                     String nachricht = "";
-                    for (int i = 1; i < msg.params.size() - 1; i++) {
+                    for (int i = 0; i < msg.params.size(); i++) {
                         nachricht = nachricht + msg.params.get(i) + " ";
                     }
-                    String client = msg.params.get(msg.params.size() - 1);
-                    System.out.println(client);
-                    System.out.println(nachricht);
+                    String client = "User: " + this.username + " / IP: " + this.ipAddress;
+                    System.out.println("Client: " + client);
+                    System.out.println("MSG: " + nachricht);
+                    responseArr.add(client);
+                    responseArr.add(nachricht);
                     break;
                 case "exit":
 
@@ -212,18 +196,41 @@ public class MainFrame extends JFrame {
             }
 
             try {
-                out.writeBytes("received Data");
+                String response = this.createResponse(responseArr);
+                out.writeUTF(response);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+        }
+
+        public String createResponse(ArrayList<String> arrayList) {
+            /* Create JSON variable */
+            JSONObject transmitJSON = new JSONObject();
+            JSONArray response = new JSONArray();
+
+            //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
+            this.msgCounter++;
+            int responseCounter = 0;
+
+            for (String s : arrayList) {
+                JSONObject elem = new JSONObject();
+                elem.put(Integer.toString(responseCounter), s);
+                response.put(elem);
+                responseCounter++;
+            }
+
+            transmitJSON.put("sequence", this.msgCounter);
+            transmitJSON.put("response", response);
+
+            return transmitJSON.toString();
         }
     }
 
     private class Message {
         public int sequence;
         public String command;
-        public ArrayList<String> params;
+        public ArrayList<String> params = new ArrayList();
 
         public Message(final String msg) {
         /*
@@ -242,7 +249,9 @@ public class MainFrame extends JFrame {
 
             JSONArray arr = clientMessage.getJSONArray("params");
             for (int i = 0; i < arr.length(); i++) {
-                this.params.add(arr.getJSONObject(i).getString("name"));
+                JSONObject object = arr.getJSONObject(i);
+                String value = object.getString(Integer.toString(i));
+                this.params.add(value);
             }
         }
     }
@@ -259,28 +268,22 @@ public class MainFrame extends JFrame {
             serverSocket = new ServerSocket(serverPort);
         }
 
-        private Client openClientConnection(final String ipAddress, final int port) {
+        private Client openClientConnection(final String ipAddress, final int port, final DataInputStream in, final DataOutputStream out) {
             Client client = null;
 
             System.out.println("connection try to open...");
-
-            for (Client c : clients) {
-                if (c.ipAddress == ipAddress && c.port == port) {
-                    return client;
-                }
-            }
 
             if (clients.size() >= 5) {
                 // Return Fehlermeldung Max. User schon erreicht
                 System.out.println("Max. Anzahl User bereits erreicht");
                 return null;
             }
-            return new Client(ipAddress, port);
+            return new Client(ipAddress, port, in, out);
         }
 
         /* Implement run() for Thread */
         public void run() {
-			/* Keep Thread running */
+            /* Keep Thread running */
             while (true) {
                 try {
 					/* Accept connection on server */
@@ -290,19 +293,17 @@ public class MainFrame extends JFrame {
                     DataInputStream in = new DataInputStream(
                             server.getInputStream());
 
-                    Message msg = new Message(in.readUTF());
+                    /* Get DataOutputStream of client to respond */
+                    DataOutputStream out = new DataOutputStream(
+                            server.getOutputStream());
 
-                    Client client = openClientConnection(server.getInetAddress().getHostName(), server.getPort());
+                    Client client = openClientConnection(server.getInetAddress().getHostName(), server.getPort(), in, out);
 
                     if (client == null) {
-                             /* Get DataOutputStream of client to respond */
-                        DataOutputStream out = new DataOutputStream(
-                                server.getOutputStream());
-
-                            /* Send response message to client */
+                        /* Send response message to client */
                         out.writeUTF("Could not connect to server. Server is full!");
-                    } else {
-                        client.session.handleMessages(msg);
+                    } else{
+                        client.start();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
