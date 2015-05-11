@@ -278,7 +278,10 @@ public class MainFrame extends JFrame {
                 System.out.println("Max. Anzahl User bereits erreicht");
                 return null;
             }
-            return new Client(ipAddress, port, in, out);
+
+            client =  new Client(ipAddress, port, in, out);
+            clients.add(client);
+            return client;
         }
 
         /* Implement run() for Thread */
