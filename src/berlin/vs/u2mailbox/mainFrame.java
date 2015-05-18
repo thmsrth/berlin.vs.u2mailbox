@@ -138,8 +138,8 @@ public class MainFrame extends JFrame {
                 return null;
             }
 
-            clients.add(client);
             client =  new ClientMainFrame(ipAddress, port, in, out, clients);
+            clients.add(client);
 
             return client;
         }

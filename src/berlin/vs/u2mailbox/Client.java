@@ -161,7 +161,7 @@ public class Client {
 		public void run() {
 			while (true) {
 				try {
-					String response = null;
+					String response = "";
 
 					/* DataInputStream to get message sent by client program */
 					DataInputStream in = new DataInputStream(
