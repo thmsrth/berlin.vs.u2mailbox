@@ -144,11 +144,8 @@ public class MainFrame extends JFrame {
                 JSONObject transmitJSON = new JSONObject();
                 JSONArray response = new JSONArray();
 
-                //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
-                int responseCounter = 0;
-
                 JSONObject elem = new JSONObject();
-                elem.put(Integer.toString(responseCounter), "too many requests, server is busy");
+                elem.put(Integer.toString(0), "too many requests, server is busy");
                 response.put(elem);
 
                 transmitJSON.put("sequence", 0);
@@ -194,10 +191,7 @@ public class MainFrame extends JFrame {
 
                     ClientMainFrame client = openClientConnection(server.getInetAddress().getHostName(), server.getPort(), in, out);
 
-                    if (client == null) {
-                        /* Send response message to client */
-                        out.writeUTF("Could not connect to server. Server is full!");
-                    } else{
+                    if (client != null) {
                         client.start();
                     }
                 } catch (Exception e) {

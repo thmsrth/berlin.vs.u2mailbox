@@ -19,10 +19,13 @@ public class CommandLogin extends CommandHandler {
         boolean freeUsername = true;
 
         if(this.msg.command.equals("login") && this.msg.params.get(0) != null){
+            String username = msg.params.get(0);
 
             for(ClientMainFrame c : clients){
-                if (c.username.equals(msg.params.get(0))){
-                    freeUsername = false;
+                if (c.username != null){
+                    if (c.username.equals(username)){
+                        freeUsername = false;
+                    }
                 }
             }
 
