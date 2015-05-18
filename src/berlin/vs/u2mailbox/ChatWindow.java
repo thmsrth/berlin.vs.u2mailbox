@@ -17,11 +17,10 @@ public class ChatWindow extends javax.swing.JFrame {
     private JTextField msgField;
     private JButton sendButton;
 
-    private JLabel lblPortServer;
-    private JLabel lblUser;
+    private JLabel lblPort;
+    private JLabel lblServer;
     private JTextField portField;
     private JTextField serverField;
-    private JTextField userField;
     private JButton loginButton;
 
 
@@ -42,7 +41,7 @@ public class ChatWindow extends javax.swing.JFrame {
         panel.setLayout(new BorderLayout());
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(2,3));
+        topPanel.setLayout(new GridLayout(3,2));
 
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1,2));
@@ -62,11 +61,10 @@ public class ChatWindow extends javax.swing.JFrame {
             }
         });
 
-        lblPortServer = new JLabel("Port / Server");
-        lblUser = new JLabel("User");
+        lblPort = new JLabel("Port");
+        lblServer = new JLabel("Server");
         portField = new JTextField("6879");
         serverField = new JTextField("localhost");
-        userField = new JTextField();
         loginButton = new JButton("anmelden");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -79,11 +77,10 @@ public class ChatWindow extends javax.swing.JFrame {
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
 
-        topPanel.add(lblPortServer);
+        topPanel.add(lblPort);
         topPanel.add(portField);
+        topPanel.add(lblServer);
         topPanel.add(serverField);
-        topPanel.add(lblUser);
-        topPanel.add(userField);
         topPanel.add(loginButton);
 
         //Add action listener to button
@@ -200,19 +197,11 @@ public class ChatWindow extends javax.swing.JFrame {
     }
 
     public JLabel getLblPortServer() {
-        return lblPortServer;
+        return lblPort;
     }
 
     public void setLblPortServer(JLabel lblPortServer) {
-        this.lblPortServer = lblPortServer;
-    }
-
-    public JLabel getLblUser() {
-        return lblUser;
-    }
-
-    public void setLblUser(JLabel lblUser) {
-        this.lblUser = lblUser;
+        this.lblPort = lblPortServer;
     }
 
     public JTextField getPortField() {
@@ -231,13 +220,6 @@ public class ChatWindow extends javax.swing.JFrame {
         this.serverField = serverField;
     }
 
-    public JTextField getUserField() {
-        return userField;
-    }
-
-    public void setUserField(JTextField userField) {
-        this.userField = userField;
-    }
 
     public JButton getLoginButton() {
         return loginButton;

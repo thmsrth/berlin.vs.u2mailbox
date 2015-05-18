@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-class Client {
+public class Client {
 
 	private ChatWindow chatWindow;
 	private String hostname;
@@ -100,43 +100,51 @@ class Client {
 
 	public void messageSend() {
 		try {
-			/* Create JSON variable */
-			JSONObject transmitJSON = new JSONObject();
-			JSONArray para = new JSONArray();
-			String cmd = null;
-			// Timestamp currentTimestamp = new
-			// Timestamp(Calendar.getInstance().getTime().getTime());
-			this.msgCounter++;
 
-			String[] commandArr = this.chatWindow.getMsgField().getText()
-					.split(":");
-			int i = 0;
-			int commandCounter = 0;
+			if (client != null) {
 
-			for (String s : commandArr) {
-				if (i == 0) {
-					cmd = s;
-				} else {
-					JSONObject elem = new JSONObject();
-					elem.put(Integer.toString(commandCounter), s);
-					para.put(elem);
-					commandCounter++;
+				/* Create JSON variable */
+				JSONObject transmitJSON = new JSONObject();
+				JSONArray para = new JSONArray();
+				String cmd = null;
+				// Timestamp currentTimestamp = new
+				// Timestamp(Calendar.getInstance().getTime().getTime());
+				this.msgCounter++;
+
+				String[] commandArr = this.chatWindow.getMsgField().getText()
+						.split(":");
+				int i = 0;
+				int commandCounter = 0;
+
+				for (String s : commandArr) {
+					if (i == 0) {
+						cmd = s;
+					} else {
+						JSONObject elem = new JSONObject();
+						elem.put(Integer.toString(commandCounter), s);
+						para.put(elem);
+						commandCounter++;
+					}
+					i++;
 				}
-				i++;
+
+				transmitJSON.put("sequence", this.msgCounter);
+				transmitJSON.put("command", cmd);
+				transmitJSON.put("params", para);
+
+				/* Get server's OutputStream */
+				OutputStream outToServer = client.getOutputStream();
+				/* Get server's DataOutputStream to write/send message */
+				DataOutputStream out = new DataOutputStream(outToServer);
+				/* Write message to DataOutputStream */
+				out.writeUTF(transmitJSON.toString());
+
+				chatWindow.clearMsgField();
+			}else{
+				String text = chatWindow.getjTextArea1().getText();
+				text = text + " \n" + "Keine Verbindung zu Server!";
+				chatWindow.getjTextArea1().setText(text);
 			}
-
-			transmitJSON.put("sequence", this.msgCounter);
-			transmitJSON.put("command", cmd);
-			transmitJSON.put("params", para);
-
-			/* Get server's OutputStream */
-			OutputStream outToServer = client.getOutputStream();
-			/* Get server's DataOutputStream to write/send message */
-			DataOutputStream out = new DataOutputStream(outToServer);
-			/* Write message to DataOutputStream */
-			out.writeUTF(transmitJSON.toString());
-
-			chatWindow.clearMsgField();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -185,12 +193,12 @@ class Client {
 							response = response + s;
 						}
 						System.out.println("Server says..." + response);
-					}else{
+					} else {
 						response = "Response null";
 					}
 
 					String text = chatWindow.getjTextArea1().getText();
-					text = text + " \n " + response;
+					text = text + " \n" + response;
 					chatWindow.getjTextArea1().setText(text);
 
 				} catch (Exception e) {
