@@ -1,6 +1,8 @@
 package berlin.vs.u2mailbox;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,11 +48,15 @@ public class ChatWindow extends javax.swing.JFrame {
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1,2));
 
-        scrollPane = new JScrollPane();
         chatArea = new JTextArea();
 
         msgField = new JTextField();
         sendButton = new JButton("send");
+        
+        scrollPane = new JScrollPane(chatArea);
+        
+        DefaultCaret caret = (DefaultCaret)chatArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         //Add action listener to button
         sendButton.addActionListener(new ActionListener() {
@@ -58,6 +64,7 @@ public class ChatWindow extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
 				/* Call startServer method */
                 client.messageSend();
+                
             }
         });
 
@@ -97,7 +104,7 @@ public class ChatWindow extends javax.swing.JFrame {
 
         panel.add(topPanel, BorderLayout.PAGE_START);
         //panel.add(lblInfo, BorderLayout.PAGE_START);
-        panel.add(chatArea,BorderLayout.CENTER);
+        panel.add(scrollPane,BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.PAGE_END);
         add(panel);
     }

@@ -138,6 +138,8 @@ public class Client {
 				DataOutputStream out = new DataOutputStream(outToServer);
 				/* Write message to DataOutputStream */
 				out.writeUTF(transmitJSON.toString());
+				
+				System.out.println(transmitJSON.toString());
 
 				chatWindow.clearMsgField();
 			}else{
@@ -188,9 +190,15 @@ public class Client {
 							params.add(value);
 						}
 
+						int t=0;
 						/* Print message received from server */
 						for (String s : params) {
-							response = response + s;
+							if(t>=1){
+								response = response + "\n"+s;
+							}else{
+								response = response +s;
+							}
+							t++;
 						}
 						System.out.println("Server says..." + response);
 					} else {
