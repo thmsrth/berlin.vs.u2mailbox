@@ -76,7 +76,7 @@ public class ClientMainFrame extends Thread {
 
     public void handleLogin(final String command) {
         CommandHandler cmd;
-        cmd = new CommandLogin(command, this);
+        cmd = new CommandLogin(command, clients, this);
         cmd.execute();
     }
 
@@ -111,7 +111,7 @@ public class ClientMainFrame extends Thread {
                 cmd.execute();
                 break;
             default:
-                cmd = new CommandExit(command, clients, this);
+                cmd = new CommandHandler(command, this);
                 cmd.execute();
                 break;
         }

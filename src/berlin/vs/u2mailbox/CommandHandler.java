@@ -18,8 +18,8 @@ public class CommandHandler {
 
     public void execute(){
         ArrayList<String> responseArr = new ArrayList<>();
-        responseArr.add("Befehl nicht bekannt");
-        this.sendResponse(this.createResponse(503, responseArr));
+        responseArr.add("fehlerhafte Anfrage");
+        this.sendResponse(this.createResponse(400, responseArr));
     }
 
     public void sendResponse(String response, ClientMainFrame client){
