@@ -166,23 +166,30 @@ public class Client {
 						e.printStackTrace();
 					}
 
-					int sequence = clientMessage.getInt("sequence");
-					//String command = clientMessage.getString("command");
-					ArrayList<String> params = new ArrayList();
+					if (clientMessage != null) {
 
-					JSONArray arr = clientMessage.getJSONArray("response");
-					for (int i = 0; i < arr.length(); i++) {
-						JSONObject object = arr.getJSONObject(i);
-						String value = object.getString(Integer.toString(i));
-						params.add(value);
+						int sequence = clientMessage.getInt("sequence");
+						// String command = clientMessage.getString("command");
+						ArrayList<String> params = new ArrayList();
+
+						JSONArray arr = clientMessage.getJSONArray("response");
+						for (int i = 0; i < arr.length(); i++) {
+							JSONObject object = arr.getJSONObject(i);
+							String value = object
+									.getString(Integer.toString(i));
+							params.add(value);
+						}
+
+						/* Print message received from server */
+						for (String s : params) {
+							response = response + s;
+						}
+						System.out.println("Server says..." + response);
+					}else{
+						response = "Response null";
 					}
 
-					/* Print message received from server */
-					System.out.println("Server says..." + response);
 					String text = chatWindow.getjTextArea1().getText();
-					for(String s : params){
-						response = response + s;
-					}
 					text = text + " \n " + response;
 					chatWindow.getjTextArea1().setText(text);
 
