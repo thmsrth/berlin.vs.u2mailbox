@@ -179,7 +179,7 @@ public class Client {
 					if (clientMessage != null) {
 
 						int sequence = clientMessage.getInt("sequence");
-						// String command = clientMessage.getString("command");
+						String statuscode = clientMessage.getString("statuscode");
 						ArrayList<String> params = new ArrayList();
 
 						JSONArray arr = clientMessage.getJSONArray("response");
@@ -196,7 +196,7 @@ public class Client {
 							if(t>=1){
 								response = response + "\n"+s;
 							}else{
-								response = response +s;
+								response = statuscode + " - " + response +s;
 							}
 							t++;
 						}

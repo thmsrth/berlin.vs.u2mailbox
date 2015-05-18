@@ -6,6 +6,9 @@ package berlin.vs.u2mailbox;
  * mainFrame.java will act as a server program aimed to receive messages and respond to client.
  */
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -137,6 +140,26 @@ public class MainFrame extends JFrame {
             if (clients.size() >= 5) {
                 // Return Fehlermeldung Max. User schon erreicht
                 System.out.println("Max. Anzahl User bereits erreicht");
+
+                JSONObject transmitJSON = new JSONObject();
+                JSONArray response = new JSONArray();
+
+                //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
+                int responseCounter = 0;
+
+                JSONObject elem = new JSONObject();
+                elem.put(Integer.toString(responseCounter), "too many requests, server is busy");
+                response.put(elem);
+
+                transmitJSON.put("sequence", 0);
+                transmitJSON.put("statuscode", 429);
+                transmitJSON.put("response", response);
+
+                try {
+                    out.writeUTF(transmitJSON.toString());
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                }
                 return null;
             }
 

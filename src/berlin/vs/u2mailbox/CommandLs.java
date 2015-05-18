@@ -8,8 +8,8 @@ import java.util.ArrayList;
  */
 public class CommandLs extends CommandHandler {
 
-    public CommandLs(String in, int msgCounter, ClientMainFrame actClient) {
-        super(in, msgCounter, actClient);
+    public CommandLs(String in, ClientMainFrame actClient) {
+        super(in, actClient);
     }
 
     @Override
@@ -23,10 +23,10 @@ public class CommandLs extends CommandHandler {
             for (File f : fileList) {
                 dirs.add(f.getName());
             }
+            this.sendResponse(this.createResponse(200, dirs));
         } else {
-            dirs.add("Verzeichnis existiert nicht");
+            dirs.add("ls '"+this.msg.params.get(0)+"', Pfad nicht gefunden");
+            this.sendResponse(this.createResponse(404, dirs));
         }
-
-        this.sendResponse(this.createResponse(dirs));
     }
 }

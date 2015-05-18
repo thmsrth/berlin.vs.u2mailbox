@@ -10,8 +10,8 @@ import java.util.Calendar;
 public class CommandExit extends CommandHandler {
     ArrayList<ClientMainFrame> clients;
 
-    public CommandExit(String in, int msgCounter,  ArrayList<ClientMainFrame> clients, ClientMainFrame actClient) {
-        super(in, msgCounter, actClient);
+    public CommandExit(String in,  ArrayList<ClientMainFrame> clients, ClientMainFrame actClient) {
+        super(in, actClient);
         this.clients = clients;
     }
 
@@ -20,7 +20,7 @@ public class CommandExit extends CommandHandler {
         ArrayList<String> responseArr = new ArrayList<>();
 
         responseArr.add("Du bist abgemeldet. Viel Spass!");
-        this.sendResponse(this.createResponse(responseArr));
+        this.sendResponse(this.createResponse(200, responseArr));
 
         this.clients.remove(this);
         this.actClient.stop();

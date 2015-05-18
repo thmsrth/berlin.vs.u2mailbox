@@ -7,8 +7,8 @@ import java.util.ArrayList;
  */
 public class CommandLogin extends CommandHandler {
 
-    public CommandLogin(String in, int msgCounter, ClientMainFrame actClient) {
-        super(in, msgCounter, actClient);
+    public CommandLogin(String in, ClientMainFrame actClient) {
+        super(in, actClient);
     }
 
     @Override
@@ -19,10 +19,12 @@ public class CommandLogin extends CommandHandler {
             this.actClient.username = msg.params.get(0);
             this.actClient.loggedIN = true;
             responseArr.add("You are logged in now. You can start to chat!");
+            this.sendResponse(this.createResponse(200, responseArr));
         } else {
-            responseArr.add("Please login with command: 'login:username'");
+            responseArr.add("(Unauthorized) Please login with command: 'login:username'");
+            this.sendResponse(this.createResponse(401, responseArr));
         }
 
-        this.sendResponse(this.createResponse(responseArr));
+
     }
 }

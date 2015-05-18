@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class CommandMsg extends CommandHandler {
     private ArrayList<ClientMainFrame> clients;
 
-    public CommandMsg(String in, int msgCounter, ArrayList<ClientMainFrame> clients, ClientMainFrame actClient) {
-        super(in, msgCounter, actClient);
+    public CommandMsg(String in, ArrayList<ClientMainFrame> clients, ClientMainFrame actClient) {
+        super(in, actClient);
         this.clients = clients;
     }
 
@@ -30,12 +30,12 @@ public class CommandMsg extends CommandHandler {
         }
 
         if (c != null) {
-            this.sendResponse(this.createResponse(sendMSG), c);
+            this.sendResponse(this.createResponse(200, sendMSG), c);
             responseMSG.add("Message: " + sendMSG.get(0) + " send successful to: " + c.username);
+            sendResponse(this.createResponse(200, responseMSG));
         } else {
-            responseMSG.add("Message: " + sendMSG.get(0) + " can't be send to: " + clientS);
+            responseMSG.add("Message: " + sendMSG.get(0) + " can't be send to: " + clientS + ". Client not exist.");
+            sendResponse(this.createResponse(404,responseMSG));
         }
-
-        sendResponse(this.createResponse(responseMSG));
     }
 }

@@ -17,7 +17,6 @@ public class ClientMainFrame extends Thread {
     public int port;
     public DataInputStream in;
     public DataOutputStream out;
-    private int msgCounter;
     public boolean loggedIN;
 
     private ArrayList<ClientMainFrame> clients;
@@ -28,7 +27,6 @@ public class ClientMainFrame extends Thread {
         this.in = in;
         this.out = out;
         this.loggedIN = false;
-        this.msgCounter = 0;
         this.clients = clients;
 
         System.out.println("session starts...");
@@ -58,14 +56,14 @@ public class ClientMainFrame extends Thread {
         JSONArray response = new JSONArray();
 
         //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
-        this.msgCounter++;
         int responseCounter = 0;
 
         JSONObject elem = new JSONObject();
         elem.put(Integer.toString(responseCounter), "Please login with command: 'login:username'");
         response.put(elem);
 
-        transmitJSON.put("sequence", this.msgCounter);
+        transmitJSON.put("sequence", 0);
+        transmitJSON.put("statuscode", 200);
         transmitJSON.put("response", response);
 
         try {
@@ -78,7 +76,7 @@ public class ClientMainFrame extends Thread {
 
     public void handleLogin(final String command) {
         CommandHandler cmd;
-        cmd = new CommandLogin(command, this.msgCounter, this);
+        cmd = new CommandLogin(command, this);
         cmd.execute();
     }
 
@@ -93,29 +91,29 @@ public class ClientMainFrame extends Thread {
 
         switch (msg.command) {
             case Commands.TIME:
-                cmd = new CommandTime(command, this.msgCounter, this);
+                cmd = new CommandTime(command, this);
                 cmd.execute();
                 break;
             case Commands.LS:
-                cmd = new CommandLs(command, this.msgCounter, this);
+                cmd = new CommandLs(command, this);
                 cmd.execute();
                 break;
             case Commands.WHO:
-                cmd = new CommandWho(command, this.msgCounter, clients, this);
+                cmd = new CommandWho(command, clients, this);
                 cmd.execute();
                 break;
             case Commands.MSG:
-                cmd = new CommandMsg(command, this.msgCounter, clients, this);
+                cmd = new CommandMsg(command, clients, this);
                 cmd.execute();
                 break;
             case Commands.EXIT:
-                cmd = new CommandExit(command, this.msgCounter, clients, this);
+                cmd = new CommandExit(command, clients, this);
                 cmd.execute();
                 break;
             default:
-                System.out.println("Ungueltiger Command");
+                cmd = new CommandExit(command, clients, this);
+                cmd.execute();
+                break;
         }
-        this.msgCounter++;
-
     }
 }

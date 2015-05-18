@@ -9,17 +9,17 @@ import java.util.ArrayList;
 
 public class CommandHandler {
     public Message msg;
-    public int msgCounter;
     public ClientMainFrame actClient;
 
-    public CommandHandler(final String in, final int msgCounter, ClientMainFrame actClient) {
+    public CommandHandler(final String in, ClientMainFrame actClient) {
         this.msg = new Message(in);
-        this.msgCounter = msgCounter;
         this.actClient = actClient;
     }
 
     public void execute(){
-        this.sendResponse("Test");
+        ArrayList<String> responseArr = new ArrayList<>();
+        responseArr.add("Befehl nicht bekannt");
+        this.sendResponse(this.createResponse(503, responseArr));
     }
 
     public void sendResponse(String response, ClientMainFrame client){
@@ -38,13 +38,11 @@ public class CommandHandler {
         }
     }
 
-    public String createResponse(ArrayList<String> arrayList) {
+    public String createResponse(int code, ArrayList<String> arrayList) {
             /* Create JSON variable */
         JSONObject transmitJSON = new JSONObject();
         JSONArray response = new JSONArray();
 
-        //Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
-        this.msgCounter++;
         int responseCounter = 0;
 
         for (String s : arrayList) {
@@ -54,7 +52,8 @@ public class CommandHandler {
             responseCounter++;
         }
 
-        transmitJSON.put("sequence", this.msgCounter);
+        transmitJSON.put("sequence", msg.sequence);
+        transmitJSON.put("statuscode", code);
         transmitJSON.put("response", response);
 
         return transmitJSON.toString();
