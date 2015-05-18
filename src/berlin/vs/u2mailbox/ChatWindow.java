@@ -76,6 +76,8 @@ public class ChatWindow extends javax.swing.JFrame {
         chatArea.setColumns(20);
         chatArea.setRows(5);
         scrollPane.setViewportView(chatArea);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
 
         topPanel.add(lblPortServer);
         topPanel.add(portField);
@@ -183,6 +185,10 @@ public class ChatWindow extends javax.swing.JFrame {
 
     public void setMsgField(JTextField msgField) {
         this.msgField = msgField;
+    }
+    
+    public void clearMsgField(){
+    	this.msgField.setText("");
     }
 
     public JButton getSendButton() {
