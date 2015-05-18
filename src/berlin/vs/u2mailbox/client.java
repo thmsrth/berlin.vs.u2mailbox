@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Client {
+class Client {
 
 	private ChatWindow chatWindow;
 	private String hostname;
