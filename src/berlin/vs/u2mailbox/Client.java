@@ -45,7 +45,7 @@ public class Client {
 	public void sendMessage(String host, int port, String message) {
 		try {
 			/*
-			 * Create new socket connection with server host using port 6666
+			 * Create new socket connection with server host using port
 			 * (port can be anything)
 			 */
 			Socket client = new Socket(host, port);
@@ -54,13 +54,13 @@ public class Client {
 			/* Get server's DataOutputStream to write/send message */
 			DataOutputStream out = new DataOutputStream(outToServer);
 			/* Write message to DataOutputStream */
-			out.writeUTF(message);
+			out.writeBytes(message);
 			/* Get InputStream to get message from server */
 			InputStream inFromServer = client.getInputStream();
 			/* Get DataInputStream to read message of server */
 			DataInputStream in = new DataInputStream(inFromServer);
 			/* Print message received from server */
-			System.out.println("Server says..." + in.readUTF());
+			System.out.println("Server says..." + Byte.toString(in.readByte()));
 			/* Close connection of client socket */
 			client.close();
 		} catch (Exception e) {
@@ -81,7 +81,7 @@ public class Client {
 
 		try {
 			/*
-			 * Create new socket connection with server host using port 6666
+			 * Create new socket connection with server host using port 8090
 			 * (port can be anything)
 			 */
 			this.client = new Socket(
@@ -137,7 +137,7 @@ public class Client {
 				/* Get server's DataOutputStream to write/send message */
 				DataOutputStream out = new DataOutputStream(outToServer);
 				/* Write message to DataOutputStream */
-				out.writeUTF(transmitJSON.toString());
+				out.writeBytes(transmitJSON.toString());
 				
 				System.out.println(transmitJSON.toString());
 
@@ -171,7 +171,7 @@ public class Client {
 
 					JSONObject clientMessage = null;
 					try {
-						clientMessage = new JSONObject(in.readUTF());
+						clientMessage = new JSONObject(Byte.toString(in.readByte()));
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}

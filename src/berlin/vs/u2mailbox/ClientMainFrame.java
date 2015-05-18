@@ -36,7 +36,7 @@ public class ClientMainFrame extends Thread {
     public void run() {
         while (true) {
             try {
-                String input = in.readUTF();
+                String input = Byte.toString(in.readByte());
                 if (!input.isEmpty()) {
                     if (this.loggedIN) {
                         handleMessages(input);
@@ -67,7 +67,7 @@ public class ClientMainFrame extends Thread {
         transmitJSON.put("response", response);
 
         try {
-            out.writeUTF(transmitJSON.toString());
+            out.writeBytes(transmitJSON.toString());
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

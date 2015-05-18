@@ -70,7 +70,7 @@ public class ChatWindow extends javax.swing.JFrame {
 
         lblPort = new JLabel("Port");
         lblServer = new JLabel("Server");
-        portField = new JTextField("6879");
+        portField = new JTextField("8090");
         serverField = new JTextField("localhost");
         loginButton = new JButton("anmelden");
 

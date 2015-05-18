@@ -67,7 +67,7 @@ public class MainFrame extends JFrame {
         txtInformation.setRows(15);
 
         lblPort = new JLabel();
-        txtPort = new JTextField("6879");
+        txtPort = new JTextField("8090");
         button = new JButton("start");
 
         lblPort.setText("Server Port");
@@ -153,7 +153,7 @@ public class MainFrame extends JFrame {
                 transmitJSON.put("response", response);
 
                 try {
-                    out.writeUTF(transmitJSON.toString());
+                    out.writeBytes(transmitJSON.toString());
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
