@@ -21,8 +21,10 @@ public class CommandExit extends CommandHandler {
 
         responseArr.add("Du bist abgemeldet. Viel Spass!");
         this.sendResponse(this.createResponse(responseArr));
+        
+        
 
-        this.clients.remove(this);
+        this.clients.remove(this.actClient);
         this.actClient.stop();
     }
 }
