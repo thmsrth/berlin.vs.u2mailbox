@@ -38,15 +38,16 @@ public class ClientMainFrame extends Thread {
     public void run() {
         while (true) {
             try {
-                if (!this.in.readUTF().isEmpty()) {
+                String input = in.readUTF();
+                if (!input.isEmpty()) {
                     if (this.loggedIN) {
-                        handleMessages(in.readUTF());
+                        handleMessages(input);
                     } else {
                         //login handle
-                        handleLogin(in.readUTF());
+                        handleLogin(input);
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
@@ -108,7 +109,8 @@ public class ClientMainFrame extends Thread {
                 cmd.execute();
                 break;
             case Commands.EXIT:
-
+                cmd = new CommandExit(command, this.msgCounter, clients, this);
+                cmd.execute();
                 break;
             default:
                 System.out.println("Ungueltiger Command");

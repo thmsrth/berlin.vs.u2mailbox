@@ -10,8 +10,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -149,6 +151,13 @@ public class MainFrame extends JFrame {
             /* Keep Thread running */
             while (true) {
                 try {
+                    InetAddress ipAddress = null;
+                    try {
+                        ipAddress = InetAddress.getLocalHost();
+                        System.out.println("IP address: " + ipAddress.getHostAddress());
+                    } catch (UnknownHostException e) {
+                        System.out.println("Could not find local IP address");
+                    }
 					/* Accept connection on server */
                     Socket server = serverSocket.accept();
 

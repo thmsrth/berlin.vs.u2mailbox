@@ -24,7 +24,7 @@ public class CommandMsg extends CommandHandler {
         String clientS = msg.params.get(1);
 
         for (ClientMainFrame client : clients) {
-            if (client.username == clientS) {
+            if (client.username.equals(clientS)) {
                 c = client;
             }
         }
