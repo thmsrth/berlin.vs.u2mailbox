@@ -3,9 +3,7 @@ package berlin.vs.u2mailbox;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -34,10 +32,19 @@ public class ClientMainFrame extends Thread {
     }
 
     public void run() {
+
+
         while (true) {
+            BufferedReader reader = null;
             try {
-                String input = Byte.toString(in.readByte());
-                if (!input.isEmpty()) {
+                reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                line = reader.readLine();
+                sb.append(line);
+
+                String input = sb.toString();
+                if (input.length() > 0){
                     if (this.loggedIN) {
                         handleMessages(input);
                     } else {
@@ -45,7 +52,8 @@ public class ClientMainFrame extends Thread {
                         handleLogin(input);
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
                 System.err.println(e.getMessage());
             }
         }
@@ -67,7 +75,7 @@ public class ClientMainFrame extends Thread {
         transmitJSON.put("response", response);
 
         try {
-            out.writeBytes(transmitJSON.toString());
+            out.write(transmitJSON.toString().getBytes("utf-8"));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

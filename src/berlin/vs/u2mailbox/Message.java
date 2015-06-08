@@ -27,10 +27,11 @@ public class Message {
         this.command = clientMessage.getString("command");
 
         JSONArray arr = clientMessage.getJSONArray("params");
-        for (int i = 0; i < arr.length(); i++) {
-            JSONObject object = arr.getJSONObject(i);
-            String value = object.getString(Integer.toString(i));
-            this.params.add(value);
+        if (arr.length() > 0){
+            for (int i = 0; i < arr.length(); i++) {
+                String value = arr.getString(i);
+                this.params.add(value);
+            }
         }
     }
 }

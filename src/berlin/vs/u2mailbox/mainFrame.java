@@ -153,7 +153,7 @@ public class MainFrame extends JFrame {
                 transmitJSON.put("response", response);
 
                 try {
-                    out.writeBytes(transmitJSON.toString());
+                    out.write(transmitJSON.toString().getBytes("utf-8"));
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }

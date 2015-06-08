@@ -24,7 +24,7 @@ public class CommandHandler {
 
     public void sendResponse(String response, ClientMainFrame client){
         try{
-            client.out.writeUTF(response);
+            client.out.write(response.getBytes("utf-8"));
         } catch (IOException e){
             System.err.println(e.getMessage());
         }
@@ -32,7 +32,7 @@ public class CommandHandler {
 
     public void sendResponse(String response){
         try{
-            this.actClient.out.writeUTF(response);
+            this.actClient.out.write(response.getBytes("utf-8"));
         } catch (IOException e){
             System.err.println(e.getMessage());
         }
@@ -47,8 +47,8 @@ public class CommandHandler {
 
         for (String s : arrayList) {
             JSONObject elem = new JSONObject();
-            elem.put(Integer.toString(responseCounter), s);
-            response.put(elem);
+            //elem.put(Integer.toString(responseCounter), s);
+            response.put(s);
             responseCounter++;
         }
 
